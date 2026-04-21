@@ -7,33 +7,45 @@ class BasicForm extends StatefulWidget {
 }
 
 class _BasicFormState extends State<BasicForm> {
-  String name = "";
-  String email = "";
-  String result = "";
+  final _formKey = GlobalKey<FormState>();
+
+  final nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Formulario básico")),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: const Text("Formulario completo")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
           child: Column(children: [
-            TextField(
-                decoration: const InputDecoration(labelText: "Nombre"),
-                onChanged: ((value) => {setState(() => result = value)})),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: const InputDecoration(labelText: "Email"),
-              onChanged: (value) => email = value,
+            TextFormField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Nombre"),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Ingrese  nombre";
+                }
+
+                return null;
+              },
             ),
-            const SizedBox(height: 10),
             ElevatedButton(
-                onPressed: () =>
-                    {setState(() => result = "Nombre: $name !! Email: $email")},
-                child: const Text("Mostrar informaciòn")),
-            const SizedBox(height: 10),
-            Text(result)
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    print("Nombre: ${nameController.text.toUpperCase()}");
+                  }
+                },
+                child: const Text("Enviar")),
+            ElevatedButton(
+                onPressed: () {
+                  nameController.clear();
+                },
+                child: const Text("Limpiar"))
           ]),
-        ));
+        ),
+      ),
+    );
   }
 }
